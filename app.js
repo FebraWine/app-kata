@@ -28,7 +28,7 @@ class App {
 class Search {
   constructor(app) {
     this.app = app;
-    this.debounceSearchPost = this.debounce(this.searchPost.bind(this), 200); // устанавливаем задержку в 300 миллисекунд
+    this.debounceSearchPost = this.debounce(this.searchPost.bind(this), 200); 
     this.app.search.addEventListener("keyup", this.debounceSearchPost);
   }
 
