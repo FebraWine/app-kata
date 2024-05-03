@@ -65,6 +65,7 @@ function downList() {
     const elementList = document.createElement("li");
     elementList.textContent = listArray[i].name;
     fragment.appendChild(elementList);
+    elementList.classList.add("li-cursor");
   }
   searchList.innerHTML = "";
   searchList.appendChild(fragment);
