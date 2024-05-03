@@ -1,9 +1,15 @@
-span {
+button {
   display: block;
   color: #bd2626;
   cursor: pointer;
   margin-left: 230px;
   margin-bottom: 5px;
+  background-color: bisque;
+  border: none;
+}
+
+button:hover {
+  opacity: 0.7;
 }
 
 li {
