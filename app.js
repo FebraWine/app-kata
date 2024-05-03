@@ -1,199 +1,94 @@
-console.log("Начало!");
+console.log("Начало");
 
-class App {
-  constructor() {
-    this.wrapp = document.createElement("div");
-    this.title = document.createElement("h1");
-    this.search = document.createElement("input");
-    this.searchReply = document.createElement("div");
-    this.title.textContent = "Поиск постов";
-    this.listPostWrapp = document.createElement("div");
-    this.listPostTitle = document.createElement("h2");
-    this.listPostTitle.textContent = "Список добалвенных репозиториев";
-    this.listPostItem = document.createElement("div");
+const appWrapp = document.createElement("div");
+const appSearch = document.createElement("div");
+const titleSearch = document.createElement("h1");
+const searchInput = document.createElement("input");
+const searchList = document.createElement("div");
 
-    this.postList = document.createElement("div");
-    this.postListItem = document.createElement("li");
+// const dropList = document.createElement("div");
 
-    this.wrapp.appendChild(this.title);
-    this.wrapp.appendChild(this.search);
-    document.body.append(this.wrapp);
-    this.listPostWrapp.appendChild(this.listPostTitle);
-    this.listPostWrapp.appendChild(this.listPostItem);
-    this.wrapp.appendChild(this.searchReply);
-    document.body.appendChild(this.listPostWrapp);
+const titleAdded = document.createElement("h2");
+const addedPost = document.createElement("div");
+const addedList = document.createElement("li");
+
+titleAdded.textContent = "Добавленные репозитории";
+titleSearch.textContent = "Поиск";
+
+appWrapp.append(appSearch);
+appWrapp.appendChild(titleSearch);
+appWrapp.appendChild(searchInput);
+appWrapp.appendChild(searchList);
+appWrapp.appendChild(titleAdded);
+appWrapp.appendChild(addedPost);
+document.body.append(appWrapp);
+
+appWrapp.classList.add("app-wrapper");
+addedPost.classList.add("app-add");
+searchInput.getAttribute("placehilder", "Поиск");
+
+let listArray = [];
+
+async function searchPost() {
+  if (searchInput.value.trim().length === 0) {
+    searchList.innerHTML = "";
+  }
+  if (searchInput.value.trim().length > 0) {
+    await requestSearch(searchInput.value);
+    downList();
   }
 }
 
-class Search {
-  constructor(app) {
-    this.app = app;
-    this.debounceSearchPost = this.debounce(this.searchPost.bind(this), 200); // устанавливаем задержку в 300 миллисекунд
-    this.app.search.addEventListener("keyup", this.debounceSearchPost);
-  }
-
-  async searchPost() {
-    return await fetch(
-      `https://api.github.com/search/repositories?q=${this.app.search.value}`
-    ).then((reply) => {
-      reply.json().then((reply) => {
-        if (this.app.search.value) {
-          this.postList(reply.items);
-          this.clickEvent(this.app.searchReply, reply.items);
-        }
-        if (!this.app.search.value) {
-          this.app.searchReply.innerHTML = "";
-        }
-      });
-    });
-  }
-
-  debounce(func, wait) {
-    let timeout;
-    return function () {
-      const context = this;
-      const args = arguments;
-      clearTimeout(timeout);
-      timeout = setTimeout(() => {
-        func.apply(context, args);
-      }, wait);
-    };
-  }
-
-  postList(element) {
-    const fragment = document.createDocumentFragment();
-    for (let i = 0; i < 5; i++) {
-      let listPost = document.createElement("li");
-      listPost.textContent = element[i].name;
-      fragment.appendChild(listPost);
-    }
-    this.app.searchReply.innerHTML = "";
-    this.app.searchReply.appendChild(fragment);
-    console.log(this.app.wrapp);
-  }
-
-  clickEvent(list, arr) {
-    list.addEventListener("click", (e) => {
-      e.stopPropagation();
-      try {
-        let newArr = arr.find((item) => item.name === e.target.textContent);
-        e.target.textContent = `Название: ${newArr.name}`;
-        e.target.textContent += "\n" + `Пользователь: ${newArr.owner.login}`;
-        e.target.textContent +=
-          "\n" + `Количество звезд: ${newArr.stargazers_count}`;
-        let delitePost = document.createElement("span");
-        delitePost.classList.add("delit-post");
-        e.target.appendChild(delitePost);
-        delitePost.textContent = "Удалить пост";
-        this.app.listPostItem.appendChild(e.target);
-        this.deletePost();
-      } catch (e) {
-        console.log("не знаю, хз, два дня сражался");
-      }
-    });
-  }
-  deletePost() {
-    console.log(this.app.listPostItem);
-    this.app.listPostItem.addEventListener("click", (e) => {
-      e.stopPropagation();
-      if (e.target.tagName === "SPAN") {
-        if (e.target.parentNode) {
-          e.target.parentNode.parentNode.removeChild(e.target.parentNode);
-        }
-      }
-    });
-  }
+async function requestSearch(value) {
+  let ListPost = await fetch(
+    `https://api.github.com/search/repositories?q=${value}&per_page=5`
+  );
+  const post = await ListPost.json();
+  listArray = post.items;
 }
-new Search(new App());
 
-console.log("Пока работает -_-");
+function debounce(func, wait) {
+  let timeout;
+  return function () {
+    const context = this;
+    const args = arguments;
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      func.apply(context, args);
+    }, wait);
+  };
+}
 
-// "https://api.github.com/search/repositories?q=Q"
+function downList() {
+  const fragment = document.createDocumentFragment();
+  for (let i = 0; listArray.length > i; i++) {
+    const elementList = document.createElement("li");
+    elementList.textContent = listArray[i].name;
+    fragment.appendChild(elementList);
+  }
+  searchList.innerHTML = "";
+  searchList.appendChild(fragment);
+  // appWrapp.appendChild(dropList);
+}
 
-// class App {
-//   constructor() {
-//   this.wrapp = document.createElement("div");
-//   this.title = document.createElement("h1");
-//   this.search = document.createElement("input");
-//   this.searchReply = document.createElement("div");
-//   this.title.textContent = "Поиск постов";
-//   this.listPostWrapp = document.createElement("div");
-//   this.listPostTitle = document.createElement("h2");
-//   this.listPostTitle.textContent = "Список добалвенных репозиториев";
-//   this.listPostItem = document.createElement("div");
+searchInput.addEventListener("keyup", debounce(searchPost.bind(this), 400));
+searchList.addEventListener("click", (e) => {
+  let postTarget = listArray.find((el) => el.name === e.target.textContent);
+  addedPost.insertAdjacentHTML(
+    "beforeEnd",
+    `<li><p>Название: ${postTarget.name}</p>
+    <p>Владелец: ${postTarget.owner.login}</p>
+    <p>Количество звезд: ${postTarget.stargazers_count}</p>
+    <span>Удалить репозиторий</span></li>`
+  );
 
-//   kotlin
-//   Copy code
-//   this.postList = document.createElement("div");
-//   this.postListItem = document.createElement("li");
-//   console.log(this.wrapp);
+  searchList.innerHTML = "";
+});
 
-//   this.wrapp.appendChild(this.title);
-//   this.wrapp.appendChild(this.search);
-//   document.body.append(this.wrapp);
-//   this.listPostWrapp.appendChild(this.listPostTitle);
-//   this.listPostWrapp.appendChild(this.listPostItem);
-//   document.body.appendChild(this.listPostWrapp);
-//   }
-//   }
+addedPost.addEventListener("click", (e) => {
+  if ((e.target.tagName = "SPAN")) {
+    e.target.parentElement.remove();
+  }
+});
 
-//   class Search {
-//   constructor(app) {
-//   this.app = app;
-//   this.app.search.addEventListener("keyup", this.searchPost.bind(this));
-//   }
-
-//   async searchPost() {
-//   return await fetch(
-//   https://api.github.com/search/repositories?q=${this.app.search.value}
-//   ).then((reply) => {
-//   reply
-//   .json()
-//   .then((reply) => {
-//   console.log(reply);
-//   let fragment = document.createDocumentFragment();
-//   for (let i = 0; i < 5; i++) {
-//   let listItem = document.createElement("li", "listItem");
-
-//           listItem.textContent = reply.items[i].name;
-//           console.log(reply.items[i].name);
-//           fragment.appendChild(listItem);
-//         }
-//         this.app.search.addEventListener("keyup", () => {
-//           console.log(this.app.search.value.length);
-//           console.log(this.app.search.value);
-//           let length = this.app.search.value.length;
-//           if (length === 0) {
-//             this.app.searchReply.innerHTML = "";
-//           }
-//         });
-//         this.app.searchReply.innerHTML = "";
-//         this.app.searchReply.appendChild(fragment);
-//         return [
-//           this.app.wrapp.appendChild(this.app.searchReply),
-//           reply.items,
-//         ];
-//       })
-//       .then((resulte) => {
-//         const [res, arr] = resulte;
-//         this.clickList(res, arr);
-//         console.log("111111");
-//       });
-//   });
-//   }
-//   clickList(list, arr) {
-//   let a = list;
-//   a.addEventListener("click", (e) => {
-//   if (e.target.tagName === "LI") {
-//   const namePost = document.createElement("p");
-//   console.log(e.target.textContent);
-//   let newArr = arr.find((item) => item.name === e.target.textContent);
-//   namePost.textContent = Название ${newArr.name}\n                               Владелец;
-//   console.log(this.app.listPostWrapp.appendChild(namePost));
-//   this.app.listPostWrapp.appendChild(namePost);
-//   }
-//   });
-//   }
-//   }
-
-//   new Search(new App());
+console.log("Конец");
