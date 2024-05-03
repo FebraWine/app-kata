@@ -84,6 +84,7 @@ searchList.addEventListener("click", (e) => {
   );
 
   searchList.innerHTML = "";
+  searchInput.value = "";
 });
 
 addedPost.addEventListener("click", (e) => {
