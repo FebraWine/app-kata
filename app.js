@@ -80,7 +80,7 @@ searchList.addEventListener("click", (e) => {
     `<li><p>Название: ${postTarget.name}</p>
     <p>Владелец: ${postTarget.owner.login}</p>
     <p>Количество звезд: ${postTarget.stargazers_count}</p>
-    <span>Удалить репозиторий</span></li>`
+    <button>Удалить репозиторий</button></li>`
   );
 
   searchList.innerHTML = "";
