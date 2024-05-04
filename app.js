@@ -88,7 +88,7 @@ searchList.addEventListener("click", (e) => {
 });
 
 addedPost.addEventListener("click", (e) => {
-  if ((e.target.tagName = "SPAN")) {
+  if (e.target.tagName === "BUTTON") {
     e.target.parentElement.remove();
   }
 });
