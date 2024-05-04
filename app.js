@@ -25,7 +25,7 @@ document.body.append(appWrapp);
 
 appWrapp.classList.add("app-wrapper");
 addedPost.classList.add("app-add");
-searchInput.getAttribute("placehilder", "Поиск");
+searchInput.setAttribute("placeholder", "Поиск");
 
 let listArray = [];
 
